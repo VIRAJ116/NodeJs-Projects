@@ -11,20 +11,19 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 exports.getAllTours = catchAsync(async (req, res, next) => {
-  // Execute query
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()
     .sort()
     .limitFields()
-    .pagination();
+    .paginate();
   const tours = await features.query;
 
-  // Send response
+  // SEND RESPONSE
   res.status(200).json({
     status: 'success',
     results: tours.length,
     data: {
-      tours: tours
+      tours
     }
   });
 });
