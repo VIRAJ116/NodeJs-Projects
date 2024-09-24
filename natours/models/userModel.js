@@ -67,6 +67,20 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTTimestamp < changedTimeStamp;
+  }
+  // false means not changed
+  return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
