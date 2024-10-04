@@ -1,7 +1,10 @@
 const express = require('express');
-
+// eslint-disable-next-line import/no-extraneous-dependencies
+const multer = require('multer');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+
+const upload = multer({ dest: 'public/img/users' })
 
 const router = express.Router();
 
