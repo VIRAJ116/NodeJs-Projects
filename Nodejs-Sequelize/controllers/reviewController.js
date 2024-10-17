@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../db/models");
 
 // model
 const Review = db.reviews;
@@ -8,6 +8,7 @@ exports.addReview = async (req, res) => {
   let data = {
     rating: req.body.rating,
     description: req.body.description,
+    product_id: req.body.productId,
   };
   const review = await Review.create(data);
   res.status(200).json({

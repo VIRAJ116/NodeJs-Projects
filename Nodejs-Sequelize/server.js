@@ -1,12 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-
+const morgan = require("morgan");
 const app = express();
 
 var corOptions = {
   origin: "*",
 };
-
+app.use(morgan("dev"));
 //middlewares
 app.use(cors(corOptions));
 

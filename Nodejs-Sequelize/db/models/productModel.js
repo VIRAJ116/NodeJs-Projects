@@ -19,6 +19,16 @@ module.exports = (sequelize, DataTypes) => {
     published: {
       type: DataTypes.BOOLEAN,
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.literal("CURRENT_TIMESTAMP"),
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.literal("CURRENT_TIMESTAMP"),
+    },
   });
   return Product;
 };

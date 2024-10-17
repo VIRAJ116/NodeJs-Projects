@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../db/models");
 
 // create main Model
 
@@ -44,7 +44,7 @@ exports.addProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   let products = await Product.findAll({
-    attributes: ["title", "price"],
+    attributes: ["id", "title", "price"],
   });
   res.status(200).send(products);
 };
@@ -90,7 +90,7 @@ exports.getProductReviews = async (req, res) => {
         as: "review",
       },
     ],
-    where: { id: "6012d898-c25b-4f78-aead-81be86361b4b" },
+    where: { id: req.params.productId },
   });
   res.status(200).json({
     data,
