@@ -24,7 +24,7 @@ module.exports = {
           updatedAt: "2024-10-16 07:41:10",
         },
         {
-          id: "766b7ee4-9347-4752-84ab-24b9aa7c996e",
+          id: "766b7re4-9347-4752-84ab-24b9aa7c996e",
           title: "Admin 2",
           price: 1253,
           description: "testing this user 2",

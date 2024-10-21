@@ -2,10 +2,20 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const app = express();
-
+const db = require("./db/models");
+const httpServer = require("http").Server(app);
 var corOptions = {
   origin: "*",
 };
+//* Sequelize Connection and Sync
+db.sequelize
+  .authenticate()
+  .then(() => {
+    console.log("DB connected!");
+  })
+  .catch((err) => {
+    console.error("DB connection failed!", err.message);
+  });
 app.use(morgan("dev"));
 //middlewares
 app.use(cors(corOptions));
@@ -26,9 +36,9 @@ app.get("/", (req, res) => {
 });
 
 // port
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
-// server
+// server;
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
 });

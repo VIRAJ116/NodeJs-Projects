@@ -1,9 +1,8 @@
 const db = require("../db/models");
 
 // create main Model
-
-const Product = db.products;
-const Review = db.reviews;
+const Product = db.Product;
+const Review = db.Review;
 
 // 1. create product
 
@@ -43,10 +42,17 @@ exports.addProduct = async (req, res) => {
 // 2) get all products
 
 exports.getAllProducts = async (req, res) => {
-  let products = await Product.findAll({
-    attributes: ["id", "title", "price"],
-  });
-  res.status(200).send(products);
+  try {
+    let products = await Product.findAll({
+      attributes: ["id", "title", "price"],
+    });
+    res.status(200).json({ products });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      error: err,
+    });
+  }
 };
 
 // 3) get single product

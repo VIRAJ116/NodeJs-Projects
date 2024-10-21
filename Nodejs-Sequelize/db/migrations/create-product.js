@@ -1,25 +1,25 @@
 "use strict";
 module.exports = {
-  async up(queryInterface, DataTypes) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable("product", {
       id: {
-        type: DataTypes.UUID,
+        type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
-        defaultValue: DataTypes.UUIDV4,
+        defaultValue: Sequelize.UUIDV4,
       },
       title: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       price: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
       },
       description: {
-        type: DataTypes.TEXT,
+        type: Sequelize.TEXT,
       },
       published: {
-        type: DataTypes.BOOLEAN,
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -33,7 +33,7 @@ module.exports = {
       },
     });
   },
-  async down(queryInterface, DataTypes) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("product");
   },
 };

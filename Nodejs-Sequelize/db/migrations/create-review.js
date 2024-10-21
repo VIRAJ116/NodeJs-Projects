@@ -1,6 +1,6 @@
 "use strict";
 module.exports = {
-  async up(queryInterface, DataTypes) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable("review", {
       id: {
         type: Sequelize.UUID,
@@ -37,7 +37,7 @@ module.exports = {
       },
     });
   },
-  async down(queryInterface, DataTypes) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("review");
   },
 };
