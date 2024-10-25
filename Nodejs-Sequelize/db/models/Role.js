@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
         allowNull: false,
       },
+      level: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       systemDefault: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
