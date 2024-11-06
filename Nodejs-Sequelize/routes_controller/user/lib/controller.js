@@ -63,7 +63,6 @@ exports.login = async (req, res) => {
         message: "Invalid Credentials!",
       });
     }
-    const token = signToken(user.id);
     await dbCommon.commitTransaction(transaction);
     // 3) If everything ok, send token to client
     createSendToken(user, status.OK, res);
@@ -113,6 +112,47 @@ exports.create = async (req, res) => {
       .json({ message: "User Created Successfully." });
   } catch (err) {
     return common.throwException(err, "Create User", req, res);
+  }
+};
+
+// find all user
+exports.findAll = async (req, res) => {
+  try {
+    var whereCondition = {};
+    if (!req.user.Role.isSystemAdmin) {
+      whereCondition.isAdmin = false;
+      whereCondition.level = { [Op.gt]: req.user.Role.level };
+    }
+    const user = await db.User.findAll({
+      where: {
+        deletedAt: null,
+      },
+      include: [
+        {
+          model: db.Role,
+          as: "Role",
+          attributes: ["id", "name"],
+          where: {
+            isSystemAdmin: false,
+            ...whereCondition,
+          },
+        },
+        {
+          model: db.User,
+          as: "CreatedByUser",
+          attributes: ["id", "firstName", "lastName", "fullName"],
+        },
+        {
+          model: db.User,
+          as: "UpdatedByUser",
+          attributes: ["id", "firstName", "lastName", "fullName"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+    return res.status(status.OK).json({ data: user });
+  } catch (err) {
+    return common.throwException(err, "Get User", req, res);
   }
 };
 
@@ -226,5 +266,91 @@ exports.findById = async (req, res) => {
     return res.status(status.OK).json({ data: user });
   } catch (err) {
     return common.throwException(err, "Get User By Id", req, res);
+  }
+};
+
+// get user options
+exports.userOptions = async (req, res) => {
+  try {
+    let skipTake = {
+      offset: 0,
+      take: null,
+    };
+    if (req.query.skip && req.query.take) {
+      skipTake = {
+        offset: Number(req.query.skip),
+        limit: Number(req.query.take),
+      };
+    }
+    const users = await db.User.findAll({
+      attributes: [
+        [db.sequelize.col("User.id"), "value"],
+        [
+          db.sequelize.fn(
+            "CONCAT",
+            db.sequelize.col("User.firstName"),
+            " ",
+            db.sequelize.col("User.lastName")
+          ),
+          "label",
+        ],
+      ],
+      where: {
+        deletedAt: null,
+      },
+      ...skipTake,
+    });
+    return res.status(status.OK).json({ data: users });
+  } catch (error) {
+    return common.throwException(error, "User Options", req, res);
+  }
+};
+
+// Delete User
+exports.delete = async (req, res) => {
+  try {
+    var whereCondition = {};
+    if (!req.User.role.isSystemAdmin) {
+      whereCondition.isAdmin = false;
+      whereCondition.level = { [Op.gt]: req.user.Role.level };
+    }
+    const user = await db.User.findOne({
+      where: {
+        deletedAt: null,
+        [Op.and]: [
+          { id: req.paras.id },
+          {
+            id: {
+              [Op.ne]: req.user.id,
+            },
+          },
+        ],
+      },
+      include: [
+        {
+          model: db.Role,
+          as: "Role",
+          attributes: ["id", "name"],
+          where: {
+            isSystemAdmin: false,
+            ...whereCondition,
+          },
+        },
+      ],
+    });
+    if (!user) {
+      return res.status(status.NotFound).json({ message: "User not found." });
+    }
+    user.set({
+      deletedAt: Sequelize.literal("CURRENT_TIMESTAMP"),
+      deletedBy: req.user.id,
+    });
+    await user.save();
+
+    return res.status(status.OK).json({
+      message: "User deleted successfully.",
+    });
+  } catch (error) {
+    return common.throwException(error, "Delete User", req, res);
   }
 };

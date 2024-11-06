@@ -70,3 +70,58 @@ const validationRules = () => {
       }),
   ];
 };
+
+const updateRules = () => {
+  return [
+    body("firstName").notEmpty().trim().withMessage("First Name is required."),
+    body("lastName").notEmpty().trim().withMessage("Last Name is required."),
+    body("mobile")
+      .notEmpty()
+      .trim()
+      .withMessage("Mobile is required.")
+      .isLength({ min: 7, max: 15 })
+      .withMessage("Enter a valid Mobile Number."),
+    body("email")
+      .notEmpty()
+      .withMessage("Email is required.")
+      .isEmail()
+      .withMessage("Enter a valid email")
+      .custom(async (value, { req }) => {
+        try {
+          const user = await User.findOne({
+            where: {
+              id: {
+                id: { [Op.ne]: req.params.id },
+                email: value?.toLowerCase(),
+              },
+            },
+          });
+          if (user) {
+            return Promise.reject("Email already in use.");
+          }
+          return true;
+        } catch (err) {
+          return Promise.reject("Something went wrong!");
+        }
+      }),
+    body("roleId").notEmpty().trim().withMessage("Role is required."),
+  ];
+};
+
+const emailValidation = () => {
+  return [
+    body("email")
+      .trim()
+      .notEmpty()
+      .withMessage("Email is required.")
+      .isEmail()
+      .withMessage("Enter a valid email"),
+  ];
+};
+
+module.exports = {
+  loginRules,
+  validationRules,
+  emailValidation,
+  updateRules,
+};
